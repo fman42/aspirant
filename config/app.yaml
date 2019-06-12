@@ -1,0 +1,6 @@
+slim:
+  debug: false
+
+templates:
+  dir: template
+  cache: var/cache/template
