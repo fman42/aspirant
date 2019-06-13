@@ -16,8 +16,10 @@
     "monolog/monolog": "^1.24",
     "psr/http-factory": "^1.0",
     "psr/http-message": "^1.0",
+    "slim/psr7": "^0.3.0",
     "slim/slim": "4.0.0-beta",
     "symfony/console": "^4.2",
+    "symfony/dotenv": "^4.3",
     "symfony/yaml": "^4.3",
     "twig/twig": "^2.10",
     "ultra-lite/container": "^6.2"

@@ -1,7 +1,4 @@
 <?php
-/**
- * 2019-06-12 21:54.
- */
 
 declare(strict_types=1);
 

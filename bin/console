@@ -1,0 +1,27 @@
+#!/usr/bin/env php
+
+<?php
+
+use App\Support\CommandMap;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Output\ConsoleOutput;
+
+if (false === in_array(PHP_SAPI, ['cli', 'phpdbg', 'embed'], true)) {
+    echo sprintf('Warning: The console should be invoked via the CLI version of PHP, not the %s SAPI%s', PHP_SAPI, PHP_EOL);
+}
+
+/** @var ContainerInterface $container */
+$container = require dirname(__DIR__) . '/bootstrap.php';
+$loader = new ContainerCommandLoader($container, $container->get(CommandMap::class)->getMap());
+
+$app = new Application();
+$app->setCommandLoader($loader);
+
+try {
+    $app->run(new ArgvInput(), new ConsoleOutput());
+} catch (Exception $e) {
+    throw new \Symfony\Component\Console\Exception\RuntimeException(sprintf('Unable to run console: %s', $e->getMessage()));
+}

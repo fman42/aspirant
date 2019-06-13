@@ -1,7 +1,4 @@
 <?php
-/**
- * 2019-06-12 21:56.
- */
 
 declare(strict_types=1);
 
@@ -29,11 +26,11 @@ class Config
     public function __construct(string $dir, string $env, string $root)
     {
         if (!is_dir($dir)) {
-            return;
+            throw new \RuntimeException(sprintf('Config directory %s not found', $dir));
         }
 
         $config = Yaml::parseFile($dir . '/app.yaml');
-        $envConfigPath = $dir . '/' . $env . '.app.yaml';
+        $envConfigPath = $dir . '/app.' . $env . '.yaml';
         if (is_readable($envConfigPath)) {
             $config = array_replace_recursive($config, Yaml::parseFile($envConfigPath));
         }
@@ -57,12 +54,12 @@ class Config
             throw new \RuntimeException('\'templates\' parameter in config must be an array');
         }
         foreach ($this->config['templates'] as $name => $value) {
-            if (strpos($value, '/') === 0) {
+            if (empty($value)) {
+                $this->config['templates'][$name] = null;
                 continue;
             }
 
-            if (empty($value)) {
-                $this->config['templates'][$name] = null;
+            if (strpos($value, '/') === 0) {
                 continue;
             }
 
@@ -77,6 +74,10 @@ class Config
      */
     public function get(string $name)
     {
-        return array_key_exists($name, $this->config) ? $this->config[$name] : null;
+        if (strpos($name, '.') !== false) {
+            $params = explode('.', $name);
+        }
+
+        return $this->config[$name] ?? null;
     }
 }

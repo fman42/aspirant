@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+  app:
+    build:
+      dockerfile: docker/php-dev.Dockerfile
+      context: .
+    volumes:
+      - .:/var/www/app
+    environment:
+      COMPOSER_MEMORY_LIMIT: -1
+      COMPOSER_ALLOW_SUPERUSER: 1
+      APP_ENV: 'dev'

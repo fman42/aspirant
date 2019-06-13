@@ -1,10 +1,18 @@
 <?php
-/**
- * 2019-06-12 21:57.
- */
 
 namespace App\Support;
 
+use UltraLite\Container\Container;
+
+/**
+ * Interface ServiceProviderInterface.
+ */
 interface ServiceProviderInterface
 {
+    /**
+     * @param Container $container
+     *
+     * @return mixed
+     */
+    public function register(Container $container);
 }
