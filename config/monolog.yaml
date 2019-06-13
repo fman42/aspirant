@@ -1,0 +1,11 @@
+monolog:
+  -
+    class: Monolog\Handler\StreamHandler
+    arguments:
+      - 'php://stderr'
+      - Monolog\Logger::DEBUG
+    formatter:
+      class: Monolog\Formatter\LineFormatter
+      arguments:
+        - "[%datetime%] %channel%.%level_name%: %message% %context% \n%extra%\n\n"
+        - 'Y-m-d H:i:s'

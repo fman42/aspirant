@@ -39,6 +39,13 @@ class Config
             $this->config[$item] = $value;
         }
 
+        if (is_readable($dir . '/monolog.yaml')) {
+            $this->config['monolog'] = Yaml::parseFile($dir . '/monolog.yaml')['monolog'];
+        }
+
+        $this->config['environment'] = $env;
+        $this->config['base_dir'] = $root;
+
         $this->resolveDirectories($root);
     }
 
@@ -74,10 +81,6 @@ class Config
      */
     public function get(string $name)
     {
-        if (strpos($name, '.') !== false) {
-            $params = explode('.', $name);
-        }
-
         return $this->config[$name] ?? null;
     }
 }

@@ -6,10 +6,14 @@ namespace App\Provider;
 
 use App\Support\CommandMap;
 use App\Support\Config;
+use App\Support\LoggerErrorHandler;
 use App\Support\NotFoundHandler;
 use App\Support\ServiceProviderInterface;
+use Monolog\Handler\HandlerInterface;
+use Monolog\Logger;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Log\LoggerInterface;
 use Slim\CallableResolver;
 use Slim\Exception\HttpNotFoundException;
 use Slim\Interfaces\CallableResolverInterface;
@@ -71,6 +75,32 @@ class AppProvider implements ServiceProviderInterface
             return $container->get(RouteResolver::class);
         });
 
+        $container->set(Logger::class, static function (ContainerInterface $container) {
+            $config = $container->get(Config::class)->get('monolog');
+            $logger = new Logger('default');
+            foreach ($config as $loggerConfig) {
+                $handler = new $loggerConfig['class'](...$loggerConfig['arguments']);
+                if (!($handler instanceof HandlerInterface)) {
+                    throw new \RuntimeException(sprintf('Class %s not implements %s', get_class($handler), HandlerInterface::class));
+                }
+                if (array_key_exists('formatter', $loggerConfig)) {
+                    $formatter = new $loggerConfig['formatter']['class'](...$loggerConfig['formatter']['arguments']);
+                    $handler->setFormatter($formatter);
+                }
+                $logger->pushHandler($handler);
+            }
+
+            return $logger;
+        });
+
+        $container->set(LoggerInterface::class, static function (ContainerInterface $container) {
+            return $container->get(Logger::class);
+        });
+
+        $container->set(LoggerErrorHandler::class, static function (ContainerInterface $container) {
+            return new LoggerErrorHandler($container->get(ResponseFactoryInterface::class), $container->get(LoggerInterface::class));
+        });
+
         $container->set(NotFoundHandler::class, static function (ContainerInterface $container) {
             return new NotFoundHandler($container->get(ResponseFactoryInterface::class), $container->get(Environment::class));
         });
@@ -85,6 +115,7 @@ class AppProvider implements ServiceProviderInterface
             );
 
             $middleware->setErrorHandler(HttpNotFoundException::class, $container->get(NotFoundHandler::class));
+            $middleware->setDefaultErrorHandler($container->get(LoggerErrorHandler::class));
 
             return $middleware;
         });
