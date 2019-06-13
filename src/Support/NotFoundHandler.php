@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Interfaces\ErrorHandlerInterface;
 use Throwable;
+use Twig\Environment;
 
 class NotFoundHandler implements ErrorHandlerInterface
 {
@@ -17,9 +18,15 @@ class NotFoundHandler implements ErrorHandlerInterface
      */
     private $factory;
 
-    public function __construct(ResponseFactoryInterface $factory)
+    /**
+     * @var Environment
+     */
+    private $environment;
+
+    public function __construct(ResponseFactoryInterface $factory, Environment $environment)
     {
         $this->factory = $factory;
+        $this->environment = $environment;
     }
 
     /**
@@ -33,6 +40,13 @@ class NotFoundHandler implements ErrorHandlerInterface
      */
     public function __invoke(ServerRequestInterface $request, Throwable $exception, bool $displayErrorDetails, bool $logErrors, bool $logErrorDetails): ResponseInterface
     {
-        return $this->factory->createResponse(404);
+        $response = $this->factory->createResponse(404);
+        try {
+            $response->getBody()->write($this->environment->render('404.html.twig'));
+        } catch (\Exception $e) {
+            return $response;
+        }
+
+        return $response;
     }
 }

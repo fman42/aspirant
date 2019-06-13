@@ -2,6 +2,8 @@
 
 use App\Provider\AppProvider;
 use App\Provider\ConsoleCommandProvider;
+use App\Provider\RenderProvider;
+use App\Provider\WebProvider;
 use App\Support\Config;
 use App\Support\ServiceProviderInterface;
 use Symfony\Component\Dotenv\Dotenv;
@@ -21,6 +23,8 @@ $config = new Config(__DIR__ . '/config', $env, __DIR__);
 $providers = [
     AppProvider::class,
     ConsoleCommandProvider::class,
+    WebProvider::class,
+    RenderProvider::class,
 ];
 
 $container = new Container([

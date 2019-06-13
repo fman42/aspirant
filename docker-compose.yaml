@@ -11,3 +11,5 @@ services:
       COMPOSER_MEMORY_LIMIT: -1
       COMPOSER_ALLOW_SUPERUSER: 1
       APP_ENV: 'dev'
+    ports:
+      - 8080:8080

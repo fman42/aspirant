@@ -1,0 +1,11 @@
+main:
+  method: 'get'
+  path: ~
+  controller: App\Controller\HomeController
+  action: index
+
+hello:
+  method: 'get'
+  path: 'hello/{name}'
+  controller: App\Controller\HelloController
+  action: index
