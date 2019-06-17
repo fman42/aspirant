@@ -43,6 +43,16 @@ class Config
             $this->config['monolog'] = Yaml::parseFile($dir . '/monolog.yaml')['monolog'];
         }
 
+        if (is_readable($dir . '/doctrine.yaml')) {
+            $doctrineConfig = Yaml::parseFile($dir . '/doctrine.yaml');
+            foreach ($doctrineConfig['mapping'] as $n => $mappingItem) {
+                if (is_dir($root . '/src/' . ltrim($mappingItem, '/'))) {
+                    $doctrineConfig['mapping'][$n] = $root . '/src/' . ltrim($mappingItem, '/');
+                }
+            }
+            $this->config['doctrine'] = $doctrineConfig;
+        }
+
         $this->config['environment'] = $env;
         $this->config['base_dir'] = $root;
 

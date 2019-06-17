@@ -1,0 +1,6 @@
+connection:
+  driver: 'pdo_mysql'
+  charset: 'utf8mb4'
+
+mapping:
+  - Entity

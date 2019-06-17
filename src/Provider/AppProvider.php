@@ -4,31 +4,24 @@ declare(strict_types=1);
 
 namespace App\Provider;
 
-use App\Support\CommandMap;
-use App\Support\Config;
-use App\Support\LoggerErrorHandler;
-use App\Support\NotFoundHandler;
-use App\Support\ServiceProviderInterface;
-use Monolog\Handler\HandlerInterface;
-use Monolog\Logger;
-use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Log\LoggerInterface;
-use Slim\CallableResolver;
-use Slim\Exception\HttpNotFoundException;
-use Slim\Interfaces\CallableResolverInterface;
-use Slim\Interfaces\RouteCollectorInterface;
-use Slim\Interfaces\RouteResolverInterface;
-use Slim\Middleware\ErrorMiddleware;
-use Slim\Middleware\RoutingMiddleware;
-use Slim\Psr7\Factory\ResponseFactory;
-use Slim\Routing\RouteCollector;
-use Slim\Routing\RouteResolver;
+use App\Support\{CommandMap, Config, LoggerErrorHandler, NotFoundHandler, ServiceProviderInterface};
+use Monolog\{Handler\HandlerInterface, Logger};
+use Psr\{Container\ContainerInterface, Http\Message\ResponseFactoryInterface, Log\LoggerInterface};
+use Slim\{CallableResolver,
+    Exception\HttpNotFoundException,
+    Interfaces\CallableResolverInterface,
+    Interfaces\RouteCollectorInterface,
+    Interfaces\RouteResolverInterface,
+    Middleware\ErrorMiddleware,
+    Middleware\RoutingMiddleware,
+    Psr7\Factory\ResponseFactory,
+    Routing\RouteCollector,
+    Routing\RouteResolver};
 use Twig\Environment;
 use UltraLite\Container\Container;
 
 /**
- * Class AppProvider.
+ * Application service provider.
  */
 class AppProvider implements ServiceProviderInterface
 {
@@ -39,42 +32,52 @@ class AppProvider implements ServiceProviderInterface
      */
     public function register(Container $container)
     {
+        // Console commands
         $container->set(CommandMap::class, static function () {
             return new CommandMap();
         });
 
+        // Response
         $container->set(ResponseFactory::class, static function () {
             return new ResponseFactory();
         });
 
+        // … and response factory
         $container->set(ResponseFactoryInterface::class, static function (ContainerInterface $container) {
             return $container->get(ResponseFactory::class);
         });
 
+        // Callable resolver by Slim
         $container->set(CallableResolver::class, static function (ContainerInterface $container) {
             return new CallableResolver($container);
         });
 
+        // Define callable resolver implementation for interface
         $container->set(CallableResolverInterface::class, static function (ContainerInterface $container) {
             return $container->get(CallableResolver::class);
         });
 
+        // Route collector
         $container->set(RouteCollector::class, static function (ContainerInterface $container) {
             return new RouteCollector($container->get(ResponseFactoryInterface::class), $container->get(CallableResolverInterface::class), $container);
         });
 
+        // … and route collector interface
         $container->set(RouteCollectorInterface::class, static function (ContainerInterface $container) {
             return $container->get(RouteCollector::class);
         });
 
+        // Route resolver implementation
         $container->set(RouteResolver::class, static function (ContainerInterface $container) {
             return new RouteResolver($container->get(RouteCollectorInterface::class));
         });
 
+        // Route resolver interface
         $container->set(RouteResolverInterface::class, static function (ContainerInterface $container) {
             return $container->get(RouteResolver::class);
         });
 
+        // Monolog
         $container->set(Logger::class, static function (ContainerInterface $container) {
             $config = $container->get(Config::class)->get('monolog');
             $logger = new Logger('default');
@@ -93,18 +96,22 @@ class AppProvider implements ServiceProviderInterface
             return $logger;
         });
 
+        // Interface for logger
         $container->set(LoggerInterface::class, static function (ContainerInterface $container) {
             return $container->get(Logger::class);
         });
 
+        // Errors
         $container->set(LoggerErrorHandler::class, static function (ContainerInterface $container) {
             return new LoggerErrorHandler($container->get(ResponseFactoryInterface::class), $container->get(LoggerInterface::class));
         });
 
+        // Errors
         $container->set(NotFoundHandler::class, static function (ContainerInterface $container) {
             return new NotFoundHandler($container->get(ResponseFactoryInterface::class), $container->get(Environment::class));
         });
 
+        // Errors
         $container->set(ErrorMiddleware::class, static function (ContainerInterface $container) {
             $middleware = new ErrorMiddleware(
                 $container->get(CallableResolverInterface::class),
@@ -120,6 +127,7 @@ class AppProvider implements ServiceProviderInterface
             return $middleware;
         });
 
+        // Middleware for routing
         $container->set(RoutingMiddleware::class, static function (ContainerInterface $container) {
             return new RoutingMiddleware($container->get(RouteResolverInterface::class));
         });

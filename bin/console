@@ -3,6 +3,7 @@
 <?php
 
 use App\Support\CommandMap;
+use Doctrine\ORM\Tools\Console\ConsoleRunner;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
@@ -18,6 +19,12 @@ $container = require dirname(__DIR__) . '/bootstrap.php';
 $loader = new ContainerCommandLoader($container, $container->get(CommandMap::class)->getMap());
 
 $app = new Application();
+
+$helperSet = ConsoleRunner::createHelperSet($container->get(\Doctrine\ORM\EntityManager::class));
+$app->setHelperSet($helperSet);
+$app->setCatchExceptions(true);
+ConsoleRunner::addCommands($app);
+
 $app->setCommandLoader($loader);
 
 try {

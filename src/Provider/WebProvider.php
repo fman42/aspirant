@@ -30,6 +30,15 @@ class WebProvider implements ServiceProviderInterface
      */
     public function register(Container $container)
     {
+        $this->defineControllerDi($container);
+        $this->defineRoutes($container);
+    }
+
+    /**
+     * @param Container $container
+     */
+    protected function defineControllerDi(Container $container): void
+    {
         $container->set(HomeController::class, static function (ContainerInterface $container) {
             return new HomeController($container->get(RouteCollectorInterface::class));
         });
@@ -37,7 +46,13 @@ class WebProvider implements ServiceProviderInterface
         $container->set(HelloController::class, static function (ContainerInterface $container) {
             return new HelloController($container->get(Environment::class));
         });
+    }
 
+    /**
+     * @param Container $container
+     */
+    protected function defineRoutes(Container $container): void
+    {
         $router = $container->get(RouteCollectorInterface::class);
 
         $router->group('/', function (RouteCollectorProxyInterface $router) use ($container) {
@@ -50,6 +65,8 @@ class WebProvider implements ServiceProviderInterface
     }
 
     /**
+     * @param Container $container
+     *
      * @return array
      */
     protected static function getRoutes(Container $container): array
