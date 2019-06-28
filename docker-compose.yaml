@@ -13,3 +13,11 @@ services:
       APP_ENV: 'dev'
     ports:
       - 8080:8080
+
+  database:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: slim_project
+      MYSQL_USER: webmaster
+      MYSQL_PASSWORD: webmaster

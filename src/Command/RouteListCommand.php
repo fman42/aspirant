@@ -10,8 +10,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+/**
+ * Class RouteListCommand.
+ */
 class RouteListCommand extends Command
 {
+    /**
+     * @var string
+     */
     protected static $defaultName = 'debug:router';
 
     /**
@@ -19,6 +25,12 @@ class RouteListCommand extends Command
      */
     private $router;
 
+    /**
+     * RouteListCommand constructor.
+     *
+     * @param RouteCollectorInterface $router
+     * @param string|null             $name
+     */
     public function __construct(RouteCollectorInterface $router, string $name = null)
     {
         parent::__construct($name);
@@ -30,6 +42,12 @@ class RouteListCommand extends Command
         $this->setDescription('List of application routes');
     }
 
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);

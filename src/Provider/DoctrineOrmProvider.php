@@ -1,13 +1,11 @@
 <?php
 /**
- * 2019-06-17
+ * 2019-06-17.
  */
 
 declare(strict_types=1);
 
-
 namespace App\Provider;
-
 
 use App\Support\Config;
 use App\Support\ServiceProviderInterface;

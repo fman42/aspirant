@@ -7,8 +7,6 @@ namespace App\Provider;
 use App\Command\RouteListCommand;
 use App\Support\CommandMap;
 use App\Support\ServiceProviderInterface;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Tools\Console\ConsoleRunner;
 use Psr\Container\ContainerInterface;
 use Slim\Interfaces\RouteCollectorInterface;
 use UltraLite\Container\Container;
