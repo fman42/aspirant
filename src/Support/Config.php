@@ -40,11 +40,16 @@ class Config
         }
 
         if (is_readable($dir . '/monolog.yaml')) {
-            $this->config['monolog'] = Yaml::parseFile($dir . '/monolog.yaml')['monolog'];
+            $this->config = array_merge($this->config, Yaml::parseFile($dir . '/monolog.yaml')['monolog']);
+        }
+
+        if (is_readable($dir . '/http-client.yaml')) {
+            $this->config = array_merge($this->config, Yaml::parseFile($dir . '/http-client.yaml'));
         }
 
         if (is_readable($dir . '/doctrine.yaml')) {
             $doctrineConfig = Yaml::parseFile($dir . '/doctrine.yaml');
+
             foreach ($doctrineConfig['mapping'] as $n => $mappingItem) {
                 if (is_dir($root . '/src/' . ltrim($mappingItem, '/'))) {
                     $doctrineConfig['mapping'][$n] = $root . '/src/' . ltrim($mappingItem, '/');

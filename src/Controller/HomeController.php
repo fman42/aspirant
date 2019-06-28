@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Movie;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Slim\Exception\HttpBadRequestException;
 use Slim\Interfaces\RouteCollectorInterface;
-use Slim\Interfaces\RouteParserInterface;
+use Twig\Environment;
 
 /**
  * Class HomeController.
@@ -15,18 +20,32 @@ use Slim\Interfaces\RouteParserInterface;
 class HomeController
 {
     /**
-     * @var RouteParserInterface
+     * @var RouteCollectorInterface
      */
-    private $routeParser;
+    private $routeCollector;
+
+    /**
+     * @var Environment
+     */
+    private $twig;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    private $em;
 
     /**
      * HomeController constructor.
      *
-     * @param RouteCollectorInterface $routeParser
+     * @param RouteCollectorInterface $routeCollector
+     * @param Environment             $twig
+     * @param EntityManagerInterface  $em
      */
-    public function __construct(RouteCollectorInterface $routeParser)
+    public function __construct(RouteCollectorInterface $routeCollector, Environment $twig, EntityManagerInterface $em)
     {
-        $this->routeParser = $routeParser->getRouteParser();
+        $this->routeCollector = $routeCollector;
+        $this->twig = $twig;
+        $this->em = $em;
     }
 
     /**
@@ -34,13 +53,32 @@ class HomeController
      * @param ResponseInterface      $response
      *
      * @return ResponseInterface
+     *
+     * @throws HttpBadRequestException
      */
     public function index(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $uri = $this->routeParser->fullUrlFor($request->getUri(), 'hello', ['name' => pathinfo(str_replace('\\', '/', __CLASS__), PATHINFO_BASENAME)]);
+        try {
+            $data = $this->twig->render('home/index.html.twig', [
+                'trailers' => $this->fetchData(),
+            ]);
+        } catch (\Exception $e) {
+            throw new HttpBadRequestException($request, $e->getMessage(), $e);
+        }
 
-        return $response
-            ->withStatus(301)
-            ->withHeader('Location', $uri);
+        $response->getBody()->write($data);
+
+        return $response;
+    }
+
+    /**
+     * @return Collection
+     */
+    protected function fetchData(): Collection
+    {
+        $data = $this->em->getRepository(Movie::class)
+            ->findAll();
+
+        return new ArrayCollection($data);
     }
 }

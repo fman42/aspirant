@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping\Index;
  * @ORM\Entity(repositoryClass="App\Repository\MovieRepository")
  * @ORM\Table(name="movie", indexes={@Index(columns={"title"})})
  */
-class Movie
+final class Movie
 {
     /**
      * @var int|null
@@ -49,6 +49,32 @@ class Movie
     private $pubDate;
 
     /**
+     * @var string|null
+     * @ORM\Column(nullable=true)
+     */
+    private $image;
+
+    /**
+     * @return string|null
+     */
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    /**
+     * @param string|null $image
+     *
+     * @return Movie
+     */
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    /**
      * @return int|null
      */
     public function getId(): ?int
@@ -69,7 +95,7 @@ class Movie
      *
      * @return Movie
      */
-    public function setTitle(?string $title): Movie
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
 
@@ -89,7 +115,7 @@ class Movie
      *
      * @return Movie
      */
-    public function setLink(?string $link): Movie
+    public function setLink(?string $link): self
     {
         $this->link = $link;
 
@@ -109,7 +135,7 @@ class Movie
      *
      * @return Movie
      */
-    public function setDescription(?string $description): Movie
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
 
@@ -129,7 +155,7 @@ class Movie
      *
      * @return Movie
      */
-    public function setPubDate(?\DateTime $pubDate): Movie
+    public function setPubDate(?\DateTime $pubDate): self
     {
         $this->pubDate = $pubDate;
 

@@ -5,8 +5,14 @@ declare(strict_types=1);
 namespace App\Provider;
 
 use App\Support\{CommandMap, Config, LoggerErrorHandler, NotFoundHandler, ServiceProviderInterface};
-use Monolog\{Handler\HandlerInterface, Logger};
-use Psr\{Container\ContainerInterface, Http\Message\ResponseFactoryInterface, Log\LoggerInterface};
+use GuzzleHttp\Client as GuzzleClient;
+use Http\Adapter\Guzzle6\Client as GuzzleAdapter;
+use Monolog\{Formatter\FormatterInterface, Handler\HandlerInterface, Logger};
+use Psr\{Container\ContainerInterface,
+    Http\Client\ClientInterface,
+    Http\Message\RequestInterface,
+    Http\Message\ResponseFactoryInterface,
+    Log\LoggerInterface};
 use Slim\{CallableResolver,
     Exception\HttpNotFoundException,
     Interfaces\CallableResolverInterface,
@@ -79,7 +85,7 @@ class AppProvider implements ServiceProviderInterface
 
         // Monolog
         $container->set(Logger::class, static function (ContainerInterface $container) {
-            $config = $container->get(Config::class)->get('monolog');
+            $config = (array) $container->get(Config::class)->get('monolog');
             $logger = new Logger('default');
             foreach ($config as $loggerConfig) {
                 $handler = new $loggerConfig['class'](...$loggerConfig['arguments']);
@@ -88,7 +94,9 @@ class AppProvider implements ServiceProviderInterface
                 }
                 if (array_key_exists('formatter', $loggerConfig)) {
                     $formatter = new $loggerConfig['formatter']['class'](...$loggerConfig['formatter']['arguments']);
-                    $handler->setFormatter($formatter);
+                    if ($formatter instanceof FormatterInterface) {
+                        $handler->setFormatter($formatter);
+                    }
                 }
                 $logger->pushHandler($handler);
             }
@@ -130,6 +138,17 @@ class AppProvider implements ServiceProviderInterface
         // Middleware for routing
         $container->set(RoutingMiddleware::class, static function (ContainerInterface $container) {
             return new RoutingMiddleware($container->get(RouteResolverInterface::class));
+        });
+
+        $container->set(GuzzleAdapter::class, static function (ContainerInterface $container) {
+            $config = $container->get(Config::class)->get('httpClient');
+            $guzzle = new GuzzleClient($config);
+
+            return new GuzzleAdapter($guzzle);
+        });
+
+        $container->set(ClientInterface::class, static function (ContainerInterface $container) {
+            return $container->get(GuzzleAdapter::class);
         });
     }
 }

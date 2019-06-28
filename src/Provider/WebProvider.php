@@ -7,10 +7,10 @@ declare(strict_types=1);
 
 namespace App\Provider;
 
-use App\Controller\HelloController;
 use App\Controller\HomeController;
 use App\Support\Config;
 use App\Support\ServiceProviderInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Slim\Interfaces\RouteCollectorInterface;
 use Slim\Interfaces\RouteCollectorProxyInterface;
@@ -40,11 +40,7 @@ class WebProvider implements ServiceProviderInterface
     protected function defineControllerDi(Container $container): void
     {
         $container->set(HomeController::class, static function (ContainerInterface $container) {
-            return new HomeController($container->get(RouteCollectorInterface::class));
-        });
-
-        $container->set(HelloController::class, static function (ContainerInterface $container) {
-            return new HelloController($container->get(Environment::class));
+            return new HomeController($container->get(RouteCollectorInterface::class), $container->get(Environment::class), $container->get(EntityManagerInterface::class));
         });
     }
 
