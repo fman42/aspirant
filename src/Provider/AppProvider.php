@@ -10,7 +10,6 @@ use Http\Adapter\Guzzle6\Client as GuzzleAdapter;
 use Monolog\{Formatter\FormatterInterface, Handler\HandlerInterface, Logger};
 use Psr\{Container\ContainerInterface,
     Http\Client\ClientInterface,
-    Http\Message\RequestInterface,
     Http\Message\ResponseFactoryInterface,
     Log\LoggerInterface};
 use Slim\{CallableResolver,
@@ -111,7 +110,11 @@ class AppProvider implements ServiceProviderInterface
 
         // Errors
         $container->set(LoggerErrorHandler::class, static function (ContainerInterface $container) {
-            return new LoggerErrorHandler($container->get(ResponseFactoryInterface::class), $container->get(LoggerInterface::class));
+            return new LoggerErrorHandler(
+                $container->get(CallableResolverInterface::class),
+                $container->get(ResponseFactoryInterface::class),
+                $container->get(LoggerInterface::class)
+            );
         });
 
         // Errors
@@ -137,12 +140,12 @@ class AppProvider implements ServiceProviderInterface
 
         // Middleware for routing
         $container->set(RoutingMiddleware::class, static function (ContainerInterface $container) {
-            return new RoutingMiddleware($container->get(RouteResolverInterface::class));
+            return new RoutingMiddleware($container->get(RouteResolverInterface::class), $container->get(RouteCollector::class)->getRouteParser());
         });
 
         $container->set(GuzzleAdapter::class, static function (ContainerInterface $container) {
             $config = $container->get(Config::class)->get('httpClient');
-            $guzzle = new GuzzleClient($config);
+            $guzzle = new GuzzleClient($config ?? []);
 
             return new GuzzleAdapter($guzzle);
         });
