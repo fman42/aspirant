@@ -12,9 +12,9 @@ use App\Container\Container;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-(new Dotenv())->loadEnv(__DIR__ . '/.env');
+(new Dotenv('APP_ENV'))->loadEnv(__DIR__ . '/.env');
 
-$env = getenv('APP_ENV');
+$env = $_ENV['APP_ENV'];
 if (!$env) {
     $env = 'dev';
 }
