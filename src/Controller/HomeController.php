@@ -14,16 +14,11 @@ use Twig\Environment;
 
 class HomeController
 {
-    private RouteCollectorInterface $routeCollector;
-    private Environment $twig;
-    private EntityManagerInterface $em;
-
-    public function __construct(RouteCollectorInterface $routeCollector, Environment $twig, EntityManagerInterface $em)
-    {
-        $this->routeCollector = $routeCollector;
-        $this->twig = $twig;
-        $this->em = $em;
-    }
+    public function __construct(
+        private RouteCollectorInterface $routeCollector,
+        private Environment $twig,
+        private EntityManagerInterface $em
+    ) {}
 
     public function index(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {

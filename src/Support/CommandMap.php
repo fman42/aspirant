@@ -2,28 +2,15 @@
 
 namespace App\Support;
 
-/**
- * Class CommandMap.
- */
 class CommandMap
 {
-    /**
-     * @var array
-     */
-    private $map = [];
+    private array $map = [];
 
-    /**
-     * @param string $name
-     * @param string $value
-     */
     public function set(string $name, string $value): void
     {
         $this->map[$name] = $value;
     }
 
-    /**
-     * @return array
-     */
     public function getMap(): array
     {
         return $this->map;

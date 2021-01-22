@@ -15,10 +15,7 @@ use Twig\Environment;
 
 class WebProvider implements ServiceProviderInterface
 {
-    /**
-     * @return mixed|void
-     */
-    public function register(Container $container)
+    public function register(Container $container): void
     {
         $this->defineControllerDi($container);
         $this->defineRoutes($container);

@@ -25,10 +25,7 @@ use Twig\Environment;
 
 class AppProvider implements ServiceProviderInterface
 {
-    /**
-     * @return mixed|void
-     */
-    public function register(Container $container)
+    public function register(Container $container): void
     {
         // Console commands
         $container->set(CommandMap::class, static function () {

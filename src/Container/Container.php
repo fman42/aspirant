@@ -6,13 +6,11 @@ use Psr\Container\ContainerInterface;
 
 class Container implements ContainerInterface
 {
-    private array $serviceFactories = [];
-
     private array $services = [];
 
     private ContainerInterface $delegateContainer;
 
-    public function __construct(array $serviceFactories = [])
+    public function __construct(private array $serviceFactories = [])
     {
         foreach ($serviceFactories as $serviceId => $serviceFactory) {
             $this->set($serviceId, $serviceFactory);

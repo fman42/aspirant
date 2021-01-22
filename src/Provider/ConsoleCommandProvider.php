@@ -2,11 +2,9 @@
 
 namespace App\Provider;
 
-use App\Command\FetchDataCommand;
-use App\Command\RouteListCommand;
+use App\Command\{FetchDataCommand, RouteListCommand};
 use App\Container\Container;
-use App\Support\CommandMap;
-use App\Support\ServiceProviderInterface;
+use App\Support\{CommandMap, ServiceProviderInterface};
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Client\ClientInterface;

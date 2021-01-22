@@ -4,9 +4,6 @@ namespace App\Support;
 
 use Symfony\Component\Yaml\Yaml;
 
-/**
- * Class Config.
- */
 class Config
 {
     private array $config = [];
@@ -57,7 +54,7 @@ class Config
         if (!isset($this->config['templates'])) {
             throw new \RuntimeException('\'templates\' parameter in config is required');
         }
-        if (!is_array($this->config['templates'])) {
+        if (!\is_array($this->config['templates'])) {
             throw new \RuntimeException('\'templates\' parameter in config must be an array');
         }
         foreach ($this->config['templates'] as $name => $value) {
@@ -66,7 +63,7 @@ class Config
                 continue;
             }
 
-            if (strpos($value, '/') === 0) {
+            if (\str_starts_with($value, '/')) {
                 continue;
             }
 

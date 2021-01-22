@@ -4,5 +4,5 @@ use App\Container\Container;
 
 interface ServiceProviderInterface
 {
-    public function register(Container $container);
+    public function register(Container $container): void;
 }

@@ -11,10 +11,7 @@ use Twig\Loader\FilesystemLoader;
 
 class RenderProvider implements ServiceProviderInterface
 {
-    /**
-     * @return mixed|void
-     */
-    public function register(Container $container)
+    public function register(Container $container): void
     {
         $container->set(Environment::class, static function (ContainerInterface $container) {
             $config = $container->get(Config::class);
