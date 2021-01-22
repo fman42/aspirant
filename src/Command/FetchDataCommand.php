@@ -1,9 +1,4 @@
-<?php
-/**
- * 2019-06-28.
- */
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Command;
 
@@ -20,37 +15,16 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-/**
- * Class FetchDataCommand.
- */
 class FetchDataCommand extends Command
 {
     private const SOURCE = 'https://trailers.apple.com/trailers/home/rss/newtrailers.rss';
 
-    /**
-     * @var string
-     */
     protected static $defaultName = 'fetch:trailers';
 
-    /**
-     * @var ClientInterface
-     */
-    private $httpClient;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var string
-     */
-    private $source;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $doctrine;
+    private ClientInterface $httpClient;
+    private LoggerInterface $logger;
+    private string $source;
+    private EntityManagerInterface $doctrine;
 
     /**
      * FetchDataCommand constructor.
@@ -76,12 +50,6 @@ class FetchDataCommand extends Command
         ;
     }
 
-    /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
-     * @return int
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->logger->info(sprintf('Start %s at %s', __CLASS__, (string) date_create()->format(DATE_ATOM)));
@@ -112,11 +80,6 @@ class FetchDataCommand extends Command
         return 0;
     }
 
-    /**
-     * @param string $data
-     *
-     * @throws \Exception
-     */
     protected function processXml(string $data): void
     {
         $xml = (new \SimpleXMLElement($data))->children();
@@ -140,23 +103,11 @@ class FetchDataCommand extends Command
         $this->doctrine->flush();
     }
 
-    /**
-     * @param string $date
-     *
-     * @return \DateTime
-     *
-     * @throws \Exception
-     */
     protected function parseDate(string $date): \DateTime
     {
         return new \DateTime($date);
     }
 
-    /**
-     * @param string $title
-     *
-     * @return Movie
-     */
     protected function getMovie(string $title): Movie
     {
         $item = $this->doctrine->getRepository(Movie::class)->findOneBy(['title' => $title]);

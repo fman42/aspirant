@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Controller;
 
@@ -14,33 +12,12 @@ use Slim\Exception\HttpBadRequestException;
 use Slim\Interfaces\RouteCollectorInterface;
 use Twig\Environment;
 
-/**
- * Class HomeController.
- */
 class HomeController
 {
-    /**
-     * @var RouteCollectorInterface
-     */
-    private $routeCollector;
+    private RouteCollectorInterface $routeCollector;
+    private Environment $twig;
+    private EntityManagerInterface $em;
 
-    /**
-     * @var Environment
-     */
-    private $twig;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
-
-    /**
-     * HomeController constructor.
-     *
-     * @param RouteCollectorInterface $routeCollector
-     * @param Environment             $twig
-     * @param EntityManagerInterface  $em
-     */
     public function __construct(RouteCollectorInterface $routeCollector, Environment $twig, EntityManagerInterface $em)
     {
         $this->routeCollector = $routeCollector;
@@ -48,14 +25,6 @@ class HomeController
         $this->em = $em;
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
-     *
-     * @return ResponseInterface
-     *
-     * @throws HttpBadRequestException
-     */
     public function index(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         try {
@@ -71,9 +40,6 @@ class HomeController
         return $response;
     }
 
-    /**
-     * @return Collection
-     */
     protected function fetchData(): Collection
     {
         $data = $this->em->getRepository(Movie::class)

@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Support;
 
@@ -11,47 +9,37 @@ use Symfony\Component\Yaml\Yaml;
  */
 class Config
 {
-    /**
-     * @var array
-     */
-    private $config = [];
+    private array $config = [];
 
-    /**
-     * Config constructor.
-     *
-     * @param string $dir
-     * @param string $env
-     * @param string $root
-     */
     public function __construct(string $dir, string $env, string $root)
     {
-        if (!is_dir($dir)) {
+        if (!\is_dir($dir)) {
             throw new \RuntimeException(sprintf('Config directory %s not found', $dir));
         }
 
         $config = Yaml::parseFile($dir . '/app.yaml');
         $envConfigPath = $dir . '/app.' . $env . '.yaml';
-        if (is_readable($envConfigPath)) {
-            $config = array_replace_recursive($config, Yaml::parseFile($envConfigPath));
+        if (\is_readable($envConfigPath)) {
+            $config = \array_replace_recursive($config, Yaml::parseFile($envConfigPath));
         }
 
         foreach ($config as $item => $value) {
             $this->config[$item] = $value;
         }
 
-        if (is_readable($dir . '/monolog.yaml')) {
+        if (\is_readable($dir . '/monolog.yaml')) {
             $this->config = array_merge($this->config, Yaml::parseFile($dir . '/monolog.yaml')['monolog']);
         }
 
-        if (is_readable($dir . '/http-client.yaml')) {
+        if (\is_readable($dir . '/http-client.yaml')) {
             $this->config = array_merge($this->config, Yaml::parseFile($dir . '/http-client.yaml'));
         }
 
-        if (is_readable($dir . '/doctrine.yaml')) {
+        if (\is_readable($dir . '/doctrine.yaml')) {
             $doctrineConfig = Yaml::parseFile($dir . '/doctrine.yaml');
 
             foreach ($doctrineConfig['mapping'] as $n => $mappingItem) {
-                if (is_dir($root . '/src/' . ltrim($mappingItem, '/'))) {
+                if (\is_dir($root . '/src/' . \ltrim($mappingItem, '/'))) {
                     $doctrineConfig['mapping'][$n] = $root . '/src/' . ltrim($mappingItem, '/');
                 }
             }
@@ -64,9 +52,6 @@ class Config
         $this->resolveDirectories($root);
     }
 
-    /**
-     * @param string $root
-     */
     private function resolveDirectories(string $root): void
     {
         if (!isset($this->config['templates'])) {
@@ -89,11 +74,6 @@ class Config
         }
     }
 
-    /**
-     * @param string $name
-     *
-     * @return mixed|null
-     */
     public function get(string $name)
     {
         return $this->config[$name] ?? null;

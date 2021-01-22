@@ -1,9 +1,4 @@
-<?php
-/**
- * 2019-06-13.
- */
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Support;
 
@@ -14,18 +9,8 @@ use Slim\Interfaces\CallableResolverInterface;
 
 class LoggerErrorHandler extends ErrorHandler
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    protected $logger;
 
-    /**
-     * LoggerErrorHandler constructor.
-     *
-     * @param CallableResolverInterface $callableResolver
-     * @param ResponseFactoryInterface  $responseFactory
-     * @param LoggerInterface           $logger
-     */
     public function __construct(CallableResolverInterface $callableResolver, ResponseFactoryInterface $responseFactory, LoggerInterface $logger)
     {
         parent::__construct($callableResolver, $responseFactory);
