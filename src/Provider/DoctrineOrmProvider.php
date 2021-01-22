@@ -1,12 +1,8 @@
-<?php
-/**
- * 2019-06-17.
- */
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Provider;
 
+use App\Container\Container;
 use App\Support\Config;
 use App\Support\ServiceProviderInterface;
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -16,16 +12,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\Tools\Setup;
 use Psr\Container\ContainerInterface;
-use UltraLite\Container\Container;
 
-/**
- * Class DoctrineOrmProvider.
- */
 class DoctrineOrmProvider implements ServiceProviderInterface
 {
-    /**
-     * @param Container $container
-     */
     public function register(Container $container): void
     {
         $container->set(EntityManager::class, function (ContainerInterface $container): EntityManager {

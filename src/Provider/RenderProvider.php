@@ -1,24 +1,17 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Provider;
 
+use App\Container\Container;
 use App\Support\Config;
 use App\Support\ServiceProviderInterface;
 use Psr\Container\ContainerInterface;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
-use UltraLite\Container\Container;
 
-/**
- * Class RenderProvider.
- */
 class RenderProvider implements ServiceProviderInterface
 {
     /**
-     * @param Container $container
-     *
      * @return mixed|void
      */
     public function register(Container $container)

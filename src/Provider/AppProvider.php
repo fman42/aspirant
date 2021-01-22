@@ -1,12 +1,11 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Provider;
 
+use App\Container\Container;
 use App\Support\{CommandMap, Config, LoggerErrorHandler, NotFoundHandler, ServiceProviderInterface};
 use GuzzleHttp\Client as GuzzleClient;
-use Http\Adapter\Guzzle6\Client as GuzzleAdapter;
+use Http\Adapter\Guzzle7\Client as GuzzleAdapter;
 use Monolog\{Formatter\FormatterInterface, Handler\HandlerInterface, Logger};
 use Psr\{Container\ContainerInterface,
     Http\Client\ClientInterface,
@@ -23,16 +22,10 @@ use Slim\{CallableResolver,
     Routing\RouteCollector,
     Routing\RouteResolver};
 use Twig\Environment;
-use UltraLite\Container\Container;
 
-/**
- * Application service provider.
- */
 class AppProvider implements ServiceProviderInterface
 {
     /**
-     * @param Container $container
-     *
      * @return mixed|void
      */
     public function register(Container $container)

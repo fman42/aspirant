@@ -8,7 +8,7 @@ use App\Provider\WebProvider;
 use App\Support\Config;
 use App\Support\ServiceProviderInterface;
 use Symfony\Component\Dotenv\Dotenv;
-use UltraLite\Container\Container;
+use App\Container\Container;
 
 require_once __DIR__ . '/vendor/autoload.php';
 

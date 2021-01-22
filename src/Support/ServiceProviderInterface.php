@@ -1,16 +1,8 @@
-<?php
+<?php namespace App\Support;
 
-namespace App\Support;
+use App\Container\Container;
 
-use UltraLite\Container\Container;
-
-/**
- * Interface ServiceProviderInterface.
- */
 interface ServiceProviderInterface
 {
-    /**
-     * @param Container $container
-     */
     public function register(Container $container);
 }
