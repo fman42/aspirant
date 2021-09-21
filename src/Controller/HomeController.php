@@ -42,4 +42,9 @@ class HomeController
 
         return new ArrayCollection($data);
     }
+
+    public function trailerCard(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    {
+        // implentation here
+    }
 }
