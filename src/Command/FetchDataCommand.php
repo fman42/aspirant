@@ -100,6 +100,7 @@ class FetchDataCommand extends Command
                 ->setDescription((string) $item->description)
                 ->setLink((string) $item->link)
                 ->setPubDate($this->parseDate((string) $item->pubDate))
+                ->setImage($item->link === null ? null : "{$item->link}/images/poster.jpg")
             ;
 
             $this->doctrine->persist($trailer);
