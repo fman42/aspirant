@@ -8,7 +8,9 @@
         <table class="table table-bordered">
             {% for trailer in trailers %}
                 <tr>
-                    <td>{{ trailer.title }}</td>
+                    <td>
+                        <a href="/trailer/{{ trailer.id }}">{{ trailer.title }}</a>
+                    </td>
                 </tr>
             {% endfor %}
         </table>
