@@ -4,3 +4,10 @@ main:
   controller: App\Controller\HomeController
   action: index
 
+trailer:
+  method: 'get'
+  path: trailer/{trailer_id}
+  controller: App\Controller\HomeController
+  action: trailerCard
+  requirements:
+    page: '\d+'
