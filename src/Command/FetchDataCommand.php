@@ -18,6 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class FetchDataCommand extends Command
 {
     private const SOURCE = 'https://trailers.apple.com/trailers/home/rss/newtrailers.rss';
+    private const LIMIT = 10;
 
     protected static $defaultName = 'fetch:trailers';
 
@@ -47,6 +48,7 @@ class FetchDataCommand extends Command
         $this
             ->setDescription('Fetch data from iTunes Movie Trailers')
             ->addArgument('source', InputArgument::OPTIONAL, 'Overwrite source')
+            ->addOption('limit', null, InputArgument::OPTIONAL, "Limit count of items", self::LIMIT)
         ;
     }
 
@@ -57,6 +59,8 @@ class FetchDataCommand extends Command
         if ($input->getArgument('source')) {
             $source = $input->getArgument('source');
         }
+
+        $limit = (int) $input->getOption('limit');
 
         if (!is_string($source)) {
             throw new RuntimeException('Source must be string');
@@ -73,14 +77,14 @@ class FetchDataCommand extends Command
             throw new RuntimeException(sprintf('Response status is %d, expected %d', $status, 200));
         }
         $data = $response->getBody()->getContents();
-        $this->processXml($data);
+        $this->processXml($data, $limit);
 
         $this->logger->info(sprintf('End %s at %s', __CLASS__, (string) date_create()->format(DATE_ATOM)));
 
         return 0;
     }
 
-    protected function processXml(string $data): void
+    protected function processXml(string $data, int $limitRows): void
     {
         $xml = (new \SimpleXMLElement($data))->children();
 //        $namespace = $xml->getNamespaces(true)['content'];
@@ -89,7 +93,13 @@ class FetchDataCommand extends Command
         if (!property_exists($xml, 'channel')) {
             throw new RuntimeException('Could not find \'channel\' element in feed');
         }
-        foreach ($xml->channel->item as $item) {
+        
+        $limitRows = sizeof($xml->channel->item) < $limitRows ? sizeof($xml->channel->item) : $limitRows;
+        for ($i = 0; $i < $limitRows; $i++) {
+            if (!isset($xml->channel->item[$i]))
+                continue;
+
+            $item = $xml->channel->item[$i];
             $trailer = $this->getMovie((string) $item->title)
                 ->setTitle((string) $item->title)
                 ->setDescription((string) $item->description)
@@ -98,7 +108,7 @@ class FetchDataCommand extends Command
             ;
 
             $this->doctrine->persist($trailer);
-        }
+        } 
 
         $this->doctrine->flush();
     }
