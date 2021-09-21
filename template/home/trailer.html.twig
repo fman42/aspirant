@@ -4,14 +4,18 @@
 
 {% block content %}
     <div class="container">
-        <article>
-            <h1 class="mt-5 mb-4">{{ item.title }} iTunes Movie trailers</h1>
-            <img />
-        </article>
-        <main>
-            <p><strong>Описание:</strong> {{ item.description }}</p>
-            <a href="{{ item.link }}" target="_blank">Перейти к источнику</a>
-        </main>
-        <a href="/">Вернуться</a>
+        <h1 class="mt-5 mb-4">{{ item.title }} iTunes Movie trailers</h1>
+        <div class="desc d-flex">
+            {% if item.image != null %}
+                <img src="{{ item.image }}"/>
+            {% endif %}
+            <main class="ml-5">
+                <p><strong>Описание:</strong> {{ item.description }}</p>
+                <a href="{{ item.link }}" target="_blank">Перейти к источнику</a>
+            </main>
+        </div>
+    </div>
+    <div class="container mt-2">
+        <a href="/"">Вернуться</a>
     </div>
 {% endblock %}

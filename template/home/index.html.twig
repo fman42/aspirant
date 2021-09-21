@@ -9,6 +9,10 @@
             {% for trailer in trailers %}
                 <tr>
                     <td>
+                        {% if trailer.image != null %}
+                            <img src="{{ trailer.image }}"/>
+                        {% endif %}
+                        &nbsp;
                         <a href="/trailer/{{ trailer.id }}">{{ trailer.title }}</a>
                     </td>
                 </tr>
