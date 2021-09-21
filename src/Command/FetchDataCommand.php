@@ -55,10 +55,8 @@ class FetchDataCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->logger->info(sprintf('Start %s at %s', __CLASS__, (string) date_create()->format(DATE_ATOM)));
-        $source = self::SOURCE;
-        if ($input->getArgument('source')) {
-            $source = $input->getArgument('source');
-        }
+        $source = $input->getArgument('source') ? 
+            (string) $input->getArgument('source') : self::SOURCE;
 
         $limit = (int) $input->getOption('limit');
 
@@ -87,9 +85,6 @@ class FetchDataCommand extends Command
     protected function processXml(string $data, int $limitRows): void
     {
         $xml = (new \SimpleXMLElement($data))->children();
-//        $namespace = $xml->getNamespaces(true)['content'];
-//        dd((string) $xml->channel->item[0]->children($namespace)->encoded);
-
         if (!property_exists($xml, 'channel')) {
             throw new RuntimeException('Could not find \'channel\' element in feed');
         }
