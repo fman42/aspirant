@@ -14,11 +14,15 @@ use Twig\Environment;
 
 class HomeController
 {
+    private EntityManagerInterface $doctrine;
+
     public function __construct(
         private RouteCollectorInterface $routeCollector,
         private Environment $twig,
         private EntityManagerInterface $em
-    ) {}
+    ) {
+        $this->doctrine = $em;
+    }
 
     public function index(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
@@ -45,6 +49,13 @@ class HomeController
 
     public function trailerCard(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        // implentation here
+        $trailer_id = (int) $args['trailer_id'];
+        $item = $this->doctrine->getRepository(Movie::class)->findOneBy(['id' => $trailer_id]);
+        if ($item === null)
+            return $response->withStatus(404);
+
+        $template = $this->twig->render('home/trailer.html.twig', compact('item'));
+        $response->getBody()->write($template);
+        return $response;
     }
 }
